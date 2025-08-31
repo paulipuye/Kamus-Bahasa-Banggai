@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Kamus Banggai–Indonesia</title>
+  <style>
+    /* Tambahkan styling sesuai selera */
+  </style>
+</head>
+<body>
+  <h1>Kamus Banggai–Indonesia</h1>
+  <input type="text" id="search" placeholder="Cari kata...">
+  <div id="daftar-kata">Memuat...</div>
+
+  <script>
+    async function loadKamus() {
+      const res = await fetch('kamus.json');
+      const data = await res.json();
+      data.sort((a, b) => a.kata.localeCompare(b.kata, 'id'));
+      window.entries = data;
+      display(data);
+    }
+
+    function display(list) {
+      const container = document.getElementById('daftar-kata');
+      container.innerHTML = '';
+      list.forEach(e => {
+        container.innerHTML += `
+        <div class="kata">
+          <h2>${e.kata}</h2>
+          <p><b>Arti:</b> ${e.arti}</p>
+          ${e.gambar ? `<img src="${e.gambar}" alt="${e.kata}">` : ''}
+          ${e.audio ? `<audio controls src="${e.audio}"></audio>` : ''}
+        </div>`;
+      });
+    }
+
+    document.getElementById('search').addEventListener('input', function() {
+      const q = this.value.toLowerCase();
+      display(window.entries.filter(e => e.kata.toLowerCase().includes(q)));
+    });
+
+    loadKamus();
+  </script>
+</body>
+</html>
